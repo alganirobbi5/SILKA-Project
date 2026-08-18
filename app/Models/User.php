@@ -11,30 +11,37 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'level', 'foto',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password', 'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public const LEVEL_ADMIN = 'admin';
+    public const LEVEL_STAFF = 'bendahara';
+
+    public function isAdmin()
+    {
+        return $this->level === self::LEVEL_ADMIN;
+    }
+
+    public function isBendahara()
+    {
+        return $this->level === self::LEVEL_STAFF;
+    }
+
+    public function getFotoUrlAttribute()
+    {
+        if (!$this->foto) {
+            return null;
+        }
+
+        return asset('storage/foto/' . $this->foto);
+    }
 }
