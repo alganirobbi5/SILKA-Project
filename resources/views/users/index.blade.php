@@ -22,7 +22,7 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Foto</th>
+                            <th>Profil</th>
                             <th>Nama</th>
                             <th>Email</th>
                             <th>Level</th>
@@ -31,17 +31,11 @@
                     </thead>
                     <tbody>
                         @forelse ($users as $user)
-                            @php
-                                $initials = collect(explode(' ', $user->name))
-                                    ->filter()->map(fn ($w) => mb_substr($w, 0, 1))->take(2)->implode('');
-                            @endphp
                             <tr>
                                 <td>
-                                    @if ($user->foto)
-                                        <img src="{{ $user->foto_url }}" alt="Foto {{ $user->name }}" style="width:42px;height:42px;object-fit:cover;border-radius:50%;border:2px solid var(--border)">
-                                    @else
-                                        <span class="avatar">{{ $initials }}</span>
-                                    @endif
+                                    <span class="avatar">
+                                        @include('partials.icon', ['name' => 'user', 'size' => 18])
+                                    </span>
                                 </td>
                                 <td class="cell-main">{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>

@@ -24,7 +24,6 @@ class UpdateUserRequest extends FormRequest
             ],
             'password' => ['nullable', 'string', 'min:8'],
             'level' => ['required', Rule::in(['admin', 'bendahara'])],
-            'foto' => ['nullable', 'image', 'mimes:jpeg,png,webp,jpg', 'max:2048'],
         ];
     }
 

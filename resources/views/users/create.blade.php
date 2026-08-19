@@ -13,7 +13,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form method="POST" action="{{ route('users.store') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('users.store') }}">
                 @csrf
 
                 <div class="form-row">
@@ -54,16 +54,6 @@
                             <span class="error-text">@include('partials.icon', ['name' => 'info', 'size' => 13]) {{ $message }}</span>
                         @enderror
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="foto">Foto (maks 2 MB, JPEG/PNG/WebP)</label>
-                    <input type="file" class="form-control file-input @error('foto') input-error @enderror"
-                           id="foto" name="foto" accept="image/jpeg,image/png,image/webp">
-                    <div class="hint">Opsional. Foto akan ditampilkan sebagai avatar pengguna.</div>
-                    @error('foto')
-                        <span class="error-text">@include('partials.icon', ['name' => 'info', 'size' => 13]) {{ $message }}</span>
-                    @enderror
                 </div>
 
                 <div class="form-actions">

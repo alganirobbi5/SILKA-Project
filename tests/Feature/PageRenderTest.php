@@ -201,4 +201,20 @@ class PageRenderTest extends TestCase
         $this->assertEquals(2024, $response->viewData('latestDataYear'));
         $response->assertSee('Belum ada transaksi di tahun ' . date('Y'));
     }
+
+    /** @test */
+    public function halaman_pdf_laporan_dan_target_dapat_diunduh()
+    {
+        foreach ([$this->admin, $this->bendahara] as $user) {
+            $this->actingAs($user)
+                ->get(route('laporan.pdf'))
+                ->assertOk()
+                ->assertHeader('Content-Type', 'application/pdf');
+
+            $this->actingAs($user)
+                ->get(route('target-capaians.pdf'))
+                ->assertOk()
+                ->assertHeader('Content-Type', 'application/pdf');
+        }
+    }
 }

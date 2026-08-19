@@ -10,6 +10,9 @@
             <p class="page-sub">Tentukan target pemasukan yang ingin dicapai setiap tahun.</p>
         </div>
         <div class="page-actions">
+            <a href="{{ route('target-capaians.pdf') }}" class="btn btn-primary">
+                @include('partials.icon', ['name' => 'download', 'size' => 16]) Cetak PDF
+            </a>
             <a href="{{ route('target-capaians.create') }}" class="btn btn-primary">
                 @include('partials.icon', ['name' => 'plus', 'size' => 16]) Tambah Target
             </a>

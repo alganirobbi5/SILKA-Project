@@ -62,7 +62,10 @@
                     <a href="{{ route('laporan.print', request()->query()) }}" class="btn btn-secondary btn-sm" target="_blank">
                         @include('partials.icon', ['name' => 'printer', 'size' => 14]) Cetak
                     </a>
-                    <a href="{{ route('laporan.export', request()->query()) }}" class="btn btn-primary btn-sm">
+                    <a href="{{ route('laporan.pdf', request()->query()) }}" class="btn btn-primary btn-sm">
+                        @include('partials.icon', ['name' => 'download', 'size' => 14]) Cetak PDF
+                    </a>
+                    <a href="{{ route('laporan.export', request()->query()) }}" class="btn btn-secondary btn-sm">
                         @include('partials.icon', ['name' => 'download', 'size' => 14]) Export Excel
                     </a>
                 </span>

@@ -12,7 +12,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'level', 'foto',
+        'name', 'email', 'password', 'level',
     ];
 
     protected $hidden = [
@@ -34,14 +34,5 @@ class User extends Authenticatable
     public function isBendahara()
     {
         return $this->level === self::LEVEL_STAFF;
-    }
-
-    public function getFotoUrlAttribute()
-    {
-        if (!$this->foto) {
-            return null;
-        }
-
-        return asset('storage/foto/' . $this->foto);
     }
 }

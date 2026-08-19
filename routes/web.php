@@ -39,7 +39,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/print', [LaporanController::class, 'print'])->name('laporan.print');
+    Route::get('/laporan/pdf', [LaporanController::class, 'pdf'])->name('laporan.pdf');
     Route::get('/laporan/export', [LaporanController::class, 'export'])->name('laporan.export');
+
+    Route::get('/target-capaians/pdf', [TargetCapaianController::class, 'pdf'])->name('target-capaians.pdf');
 
     Route::resource('users', UserController::class)->except(['show'])->middleware('can:manage-users');
 });

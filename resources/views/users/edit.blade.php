@@ -13,7 +13,7 @@
 
     <div class="card">
         <div class="card-body">
-            <form method="POST" action="{{ route('users.update', $user->id) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('users.update', $user->id) }}">
                 @csrf
                 @method('PUT')
 
@@ -55,22 +55,6 @@
                             <span class="error-text">@include('partials.icon', ['name' => 'info', 'size' => 13]) {{ $message }}</span>
                         @enderror
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="foto">Foto (maks 2 MB, JPEG/PNG/WebP)</label>
-                    @if ($user->foto)
-                        <div style="margin-bottom:10px">
-                            <img src="{{ $user->foto_url }}" alt="Foto {{ $user->name }}"
-                                 style="width:84px;height:84px;object-fit:cover;border-radius:14px;border:2px solid var(--border)">
-                        </div>
-                    @endif
-                    <input type="file" class="form-control file-input @error('foto') input-error @enderror"
-                           id="foto" name="foto" accept="image/jpeg,image/png,image/webp">
-                    <div class="hint">Kosongkan untuk mempertahankan foto lama.</div>
-                    @error('foto')
-                        <span class="error-text">@include('partials.icon', ['name' => 'info', 'size' => 13]) {{ $message }}</span>
-                    @enderror
                 </div>
 
                 <div class="form-actions">

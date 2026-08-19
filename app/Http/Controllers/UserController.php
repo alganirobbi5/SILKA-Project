@@ -5,10 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -26,17 +24,10 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
-        $data = $request->safe()->except(['foto']);
+        $data = $request->safe()->all();
         $data['password'] = Hash::make($data['password']);
 
-        if ($request->hasFile('foto')) {
-            $foto = $request->file('foto');
-            $nama = uniqid('foto_', true) . '.' . $foto->getClientOriginalExtension();
-            $foto->storeAs('foto', $nama, 'public');
-            $data['foto'] = $nama;
-        }
-
-        $user = User::create($data);
+        User::create($data);
 
         return redirect()->route('users.index')
             ->with('success', 'User berhasil ditambahkan.');
@@ -49,31 +40,13 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, User $user)
     {
-        $data = $request->safe()->except(['foto', 'password']);
+        $data = $request->safe()->except(['password']);
 
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }
 
-        if ($request->hasFile('foto')) {
-            $foto = $request->file('foto');
-            $nama = uniqid('foto_', true) . '.' . $foto->getClientOriginalExtension();
-            $foto->storeAs('foto', $nama, 'public');
-            $data['foto'] = $nama;
-
-            if ($user->foto && Storage::disk('public')->exists('foto/' . $user->foto)) {
-                Storage::disk('public')->delete('foto/' . $user->foto);
-            }
-        }
-
-        try {
-            $user->update($data);
-        } catch (\Exception $e) {
-            if (isset($nama) && $nama && Storage::disk('public')->exists('foto/' . $nama)) {
-                Storage::disk('public')->delete('foto/' . $nama);
-            }
-            throw $e;
-        }
+        $user->update($data);
 
         return redirect()->route('users.index')
             ->with('success', 'User berhasil diperbarui.');
@@ -91,12 +64,7 @@ class UserController extends Controller
         }
 
         try {
-            $foto = $user->foto;
             $user->delete();
-
-            if ($foto && Storage::disk('public')->exists('foto/' . $foto)) {
-                Storage::disk('public')->delete('foto/' . $foto);
-            }
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menghapus user: ' . $e->getMessage());
         }
