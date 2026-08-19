@@ -415,6 +415,102 @@ Nilai tersebut tidak boleh ditebak karena berpengaruh langsung pada authorizatio
 
 ---
 
+## 🚀 Instalasi & Konfigurasi
+
+### 1. Prasyarat
+
+- PHP 7.4+ (project berjalan di PHP 8.x untuk lingkungan development)
+- Composer
+- MySQL/MariaDB
+- Laragon (direkomendasikan) atau server lokal lainnya
+
+### 2. Langkah instalasi
+
+```bash
+# 1. Install dependency
+composer install
+
+# 2. Buat file environment
+cp .env.example .env
+
+# 3. Generate application key
+php artisan key:generate
+
+# 4. Konfigurasi koneksi database pada .env
+#    DB_CONNECTION=mysql
+#    DB_HOST=127.0.0.1
+#    DB_PORT=3306
+#    DB_DATABASE=silka.
+#    DB_USERNAME=root
+#    DB_PASSWORD=
+
+# 5. Jalankan migration (aman, kondisional terhadap schema existing)
+php artisan migrate
+
+# 6. Buat symbolic link storage untuk foto profil
+php artisan storage:link
+
+# 7. Jalankan development server
+php artisan serve
+```
+
+> Catatan: nama database pada environment lokal adalah `silka.` (mengikuti konfigurasi `.env` existing). Migration bersifat kompatibel — kolom/tabel/index yang sudah ada tidak akan ditambahkan ulang, dan tidak ada perintah `migrate:fresh`/`TRUNCATE` otomatis.
+
+### 3. Struktur database
+
+Tabel inti: `cluster`, `coa`, `kategori`, `transaksi`, `target_capaians`, `users`. Kolom `transaksi.coa_id`, `coa.saldo`, dan `users.level` ditambahkan/dinormalisasi melalui migration kompatibel yang sudah diverifikasi (lihat `IMPLEMENTATION_LOG.md`).
+
+---
+
+## 🧪 Testing
+
+Project menggunakan database test terpisah `silka_test` agar data development tidak terganggu.
+
+```bash
+# Pastikan MySQL berjalan, lalu buat database test (sekali saja)
+mysql -u root -e "CREATE DATABASE IF NOT EXISTS silka_test CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+
+# Jalankan seluruh test
+phpunit
+
+# Jalankan subset test
+phpunit --filter AuthTest
+phpunit --filter TransaksiSaldoTest
+```
+
+Konfigurasi test berada di `phpunit.xml` (`DB_DATABASE=silka_test`). Setiap test menggunakan `RefreshDatabase` sehingga database test di-reset otomatis.
+
+Cakupan test mengikuti PRD Bagian 17:
+
+| Area | File test |
+|---|---|
+| Autentikasi & authorization | `tests/Feature/AuthTest.php` |
+| Transaksi & saldo COA | `tests/Feature/TransaksiSaldoTest.php` |
+| Kategori & COA | `tests/Feature/KategoriCoaTest.php` |
+| Dashboard & target | `tests/Feature/DashboardTargetTest.php` |
+| Laporan & export | `tests/Feature/LaporanTest.php` |
+| User & upload | `tests/Feature/UserTest.php` |
+
+---
+
+## 🌍 Deployment Checklist
+
+- [ ] `APP_DEBUG=false` pada environment production.
+- [ ] `APP_KEY`, database, mail/log, session, dan storage dikonfigurasi.
+- [ ] Backup database tersedia dan dapat direstore.
+- [ ] Migration direview sebelum dijalankan (`php artisan migrate`).
+- [ ] Kolom `transaksi.coa_id` dan `coa.saldo` tersedia.
+- [ ] Kategori default ID 1 (`Tanpa Kategori`) tersedia.
+- [ ] Mapping `users.level` (`admin`/`bendahara`) terdokumentasi.
+- [ ] Klasifikasi piutang/hutang terdokumentasi.
+- [ ] `php artisan storage:link` dijalankan agar foto profil tampil.
+- [ ] `php artisan config:cache`, `route:cache`, `view:cache` setelah konfigurasi final.
+- [ ] Smoke test login, transaksi, saldo, laporan, export, dan logout lulus.
+- [ ] Permission storage/cache minimal sesuai kebutuhan aplikasi.
+- [ ] HTTPS dan cookie secure aktif pada deployment HTTPS.
+
+---
+
 ## 💡 Project Philosophy
 
 <div align="center">

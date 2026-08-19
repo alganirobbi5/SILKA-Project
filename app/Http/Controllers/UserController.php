@@ -32,7 +32,7 @@ class UserController extends Controller
         if ($request->hasFile('foto')) {
             $foto = $request->file('foto');
             $nama = uniqid('foto_', true) . '.' . $foto->getClientOriginalExtension();
-            $foto->storeAs('public/foto', $nama);
+            $foto->storeAs('foto', $nama, 'public');
             $data['foto'] = $nama;
         }
 
@@ -58,19 +58,19 @@ class UserController extends Controller
         if ($request->hasFile('foto')) {
             $foto = $request->file('foto');
             $nama = uniqid('foto_', true) . '.' . $foto->getClientOriginalExtension();
-            $foto->storeAs('public/foto', $nama);
+            $foto->storeAs('foto', $nama, 'public');
             $data['foto'] = $nama;
 
-            if ($user->foto && Storage::exists('public/foto/' . $user->foto)) {
-                Storage::delete('public/foto/' . $user->foto);
+            if ($user->foto && Storage::disk('public')->exists('foto/' . $user->foto)) {
+                Storage::disk('public')->delete('foto/' . $user->foto);
             }
         }
 
         try {
             $user->update($data);
         } catch (\Exception $e) {
-            if (isset($nama) && $nama && Storage::exists('public/foto/' . $nama)) {
-                Storage::delete('public/foto/' . $nama);
+            if (isset($nama) && $nama && Storage::disk('public')->exists('foto/' . $nama)) {
+                Storage::disk('public')->delete('foto/' . $nama);
             }
             throw $e;
         }
@@ -94,8 +94,8 @@ class UserController extends Controller
             $foto = $user->foto;
             $user->delete();
 
-            if ($foto && Storage::exists('public/foto/' . $foto)) {
-                Storage::delete('public/foto/' . $foto);
+            if ($foto && Storage::disk('public')->exists('foto/' . $foto)) {
+                Storage::disk('public')->delete('foto/' . $foto);
             }
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menghapus user: ' . $e->getMessage());

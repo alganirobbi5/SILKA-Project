@@ -12,20 +12,34 @@
             color: #111;
             line-height: 1.4;
         }
+        .no-print {
+            text-align: right;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+        .no-print button {
+            padding: 8px 18px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background: #fff;
+            color: #1f2937;
+        }
+        .no-print button.btn-primary { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+        .no-print button:hover { opacity: .9; }
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             border-bottom: 2px solid #111;
             padding-bottom: 10px;
         }
-        .header h1 { font-size: 18px; }
-        .header .periode { font-size: 13px; margin-top: 4px; }
-        .no-print { text-align: right; margin-bottom: 10px; }
-        .no-print button {
-            padding: 6px 14px;
-            cursor: pointer;
-            font-size: 13px;
-        }
+        .header .brand { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #555; }
+        .header h1 { font-size: 18px; margin-top: 2px; }
+        .header .periode { font-size: 12.5px; margin-top: 5px; color: #333; }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -53,11 +67,12 @@
 </head>
 <body>
     <div class="no-print">
-        <button onclick="window.print()">Cetak</button>
+        <button class="btn-primary" onclick="window.print()">&#128424; Cetak</button>
         <button onclick="window.close()">Tutup</button>
     </div>
 
     <div class="header">
+        <div class="brand">SILKA Keuangan</div>
         <h1>Laporan Transaksi</h1>
         <div class="periode">
             @if ($filters['tanggal_awal'] || $filters['tanggal_akhir'])

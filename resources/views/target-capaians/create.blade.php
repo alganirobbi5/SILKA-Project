@@ -3,8 +3,15 @@
 @section('title', 'Tambah Target Capaian')
 
 @section('content')
+    <div class="page-header">
+        <div>
+            <div class="page-kicker">Perencanaan</div>
+            <h2 class="page-title">Tambah Target Capaian</h2>
+            <p class="page-sub">Tetapkan target pemasukan untuk tahun tertentu.</p>
+        </div>
+    </div>
+
     <div class="card">
-        <div class="card-header"><span>Tambah Target Capaian</span></div>
         <div class="card-body">
             <form method="POST" action="{{ route('target-capaians.store') }}">
                 @csrf
@@ -13,15 +20,21 @@
                         <label for="tahun">Tahun</label>
                         <input type="number" min="2000" max="2100" class="form-control @error('tahun') input-error @enderror"
                                id="tahun" name="tahun" value="{{ old('tahun', date('Y')) }}" required>
+                        @error('tahun')
+                            <span class="error-text">@include('partials.icon', ['name' => 'info', 'size' => 13]) {{ $message }}</span>
+                        @enderror
                     </div>
                     <div class="form-group">
                         <label for="target_capaian">Target Capaian (Rp)</label>
                         <input type="text" inputmode="decimal" class="form-control @error('target_capaian') input-error @enderror"
-                               id="target_capaian" name="target_capaian" value="{{ old('target_capaian') }}" required>
+                               id="target_capaian" name="target_capaian" value="{{ old('target_capaian') }}" placeholder="0" required>
+                        @error('target_capaian')
+                            <span class="error-text">@include('partials.icon', ['name' => 'info', 'size' => 13]) {{ $message }}</span>
+                        @enderror
                     </div>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-primary">@include('partials.icon', ['name' => 'check', 'size' => 15]) Simpan</button>
                     <a href="{{ route('target-capaians.index') }}" class="btn btn-secondary">Batal</a>
                 </div>
             </form>
