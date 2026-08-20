@@ -59,14 +59,25 @@
                                 <td class="cell-main">{{ $coa->nama_coa }}</td>
                                 <td>
                                     @php
-                                        $badge = match ($coa->jenis) {
-                                            'Aset' => 'badge-brand',
-                                            'Liabilitas' => 'badge-amber',
-                                            'Ekuitas' => 'badge-neutral',
-                                            'Pendapatan' => 'badge-masuk',
-                                            'Beban' => 'badge-keluar',
-                                            default => 'badge-neutral',
-                                        };
+                                        switch ($coa->jenis) {
+                                            case 'Aset':
+                                                $badge = 'badge-brand';
+                                                break;
+                                            case 'Liabilitas':
+                                                $badge = 'badge-amber';
+                                                break;
+                                            case 'Ekuitas':
+                                                $badge = 'badge-neutral';
+                                                break;
+                                            case 'Pendapatan':
+                                                $badge = 'badge-masuk';
+                                                break;
+                                            case 'Beban':
+                                                $badge = 'badge-keluar';
+                                                break;
+                                            default:
+                                                $badge = 'badge-neutral';
+                                        }
                                     @endphp
                                     <span class="badge {{ $badge }}">{{ $coa->jenis }}</span>
                                 </td>
