@@ -11,9 +11,25 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        $year = (int) $request->query('year', date('Y'));
+        // Satu sumber tahun utama: tahun yang benar-benar memiliki data transaksi
+        // (hingga tahun berjalan, mengabaikan data tahun rusak seperti 2224)
+        $tahunTersedia = Transaksi::selectRaw('YEAR(tanggal) AS tahun')
+            ->whereYear('tanggal', '>=', 2000)
+            ->whereYear('tanggal', '<=', (int) date('Y'))
+            ->groupBy('tahun')
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun')
+            ->map(function ($value) {
+                return (int) $value;
+            })
+            ->values();
+
+        // Tahun default = tahun data terbaru yang tersedia; fallback ke tahun berjalan bila belum ada data
+        $defaultYear = $tahunTersedia->first() ?? (int) date('Y');
+
+        $year = (int) $request->query('year', $defaultYear);
         if ($year < 2000 || $year > 2100) {
-            $year = (int) date('Y');
+            $year = $defaultYear;
         }
 
         $today = date('Y-m-d');
@@ -40,11 +56,7 @@ class DashboardController extends Controller
 
         $target = TargetCapaian::where('tahun', $year)->first();
 
-        // Piutang & hutang tahun lalu (COA-CLASS-01 dari master COA existing)
-        $prevYear = $year - 1;
-        $prevYearStart = $prevYear . '-01-01';
-        $prevYearEnd = $prevYear . '-12-31';
-
+        // Piutang & hutang tahun terpilih (COA-CLASS-01 dari master COA existing)
         $piutangCoaIds = Coa::where('jenis', 'Aset')
             ->where('nama_coa', 'like', '%Piutang%')
             ->pluck('id');
@@ -54,7 +66,7 @@ class DashboardController extends Controller
 
         $piutang = 0;
         if ($piutangCoaIds->isNotEmpty()) {
-            $piutang = Transaksi::whereBetween('tanggal', [$prevYearStart, $prevYearEnd])
+            $piutang = Transaksi::whereBetween('tanggal', [$startOfYear, $endOfYear])
                 ->whereIn('coa_id', $piutangCoaIds)
                 ->selectRaw("SUM(CASE WHEN jenis = 'pemasukan' THEN nominal ELSE -nominal END) AS total")
                 ->value('total') ?? 0;
@@ -62,22 +74,11 @@ class DashboardController extends Controller
 
         $hutang = 0;
         if ($hutangCoaIds->isNotEmpty()) {
-            $hutang = Transaksi::whereBetween('tanggal', [$prevYearStart, $prevYearEnd])
+            $hutang = Transaksi::whereBetween('tanggal', [$startOfYear, $endOfYear])
                 ->whereIn('coa_id', $hutangCoaIds)
                 ->selectRaw("SUM(CASE WHEN jenis = 'pemasukan' THEN nominal ELSE -nominal END) AS total")
                 ->value('total') ?? 0;
         }
-
-        $tahunTersedia = Transaksi::selectRaw('YEAR(tanggal) AS tahun')
-            ->whereYear('tanggal', '>=', 2000)
-            ->whereYear('tanggal', '<=', (int) date('Y'))
-            ->groupBy('tahun')
-            ->orderBy('tahun', 'desc')
-            ->pluck('tahun')
-            ->push((int) date('Y'))
-            ->unique()
-            ->sortDesc()
-            ->values();
 
         // Transaksi terbaru
         $recentTransaksis = Transaksi::with(['kategori', 'coa'])

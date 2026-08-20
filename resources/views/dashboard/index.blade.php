@@ -150,10 +150,10 @@
         <div class="stat-card tilt reveal" style="--tile-grad:linear-gradient(135deg,#0ea5e9,#0284c7);--d:.4s">
             <div class="stat-top">
                 <span class="stat-icon">@include('partials.icon', ['name' => 'scale', 'size' => 22])</span>
-                <span class="stat-trend flat">Tahun {{ $year - 1 }}</span>
+                <span class="stat-trend flat">Tahun {{ $year }}</span>
             </div>
             <div>
-                <div class="stat-label">Piutang / Hutang {{ $year - 1 }}</div>
+                <div class="stat-label">Piutang / Hutang {{ $year }}</div>
                 <div class="stat-value" style="font-size:19px">Piutang {{ rupiah($piutang) }}</div>
                 <div class="stat-hint">Hutang {{ rupiah($hutang) }}</div>
             </div>

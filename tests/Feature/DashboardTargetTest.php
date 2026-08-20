@@ -61,6 +61,24 @@ class DashboardTargetTest extends TestCase
     }
 
     /** @test */
+    public function tanpa_parameter_tahun_menggunakan_tahun_data_terbaru_saat_data_lebih_lama()
+    {
+        $this->createTransaksi('2024-06-15', 'pemasukan', 100000);
+
+        $response = $this->actingAs($this->user)
+            ->get(route('dashboard'))
+            ->assertOk()
+            ->assertViewHas('year', 2024);
+
+        // Selector hanya memuat tahun yang benar-benar memiliki data transaksi,
+        // tanpa tahun sistem berjalan yang tidak memiliki data.
+        $response->assertViewHas('tahunTersedia', function ($tahun) {
+            $all = $tahun->all();
+            return in_array(2024, $all) && !in_array((int) date('Y'), $all);
+        });
+    }
+
+    /** @test */
     public function parameter_tahun_valid_menggunakan_tahun_tersebut()
     {
         $this->actingAs($this->user)
@@ -81,6 +99,22 @@ class DashboardTargetTest extends TestCase
             ->get(route('dashboard', ['year' => '9999']))
             ->assertOk()
             ->assertViewHas('year', (int) date('Y'));
+    }
+
+    /** @test */
+    public function parameter_tahun_invalid_memakai_fallback_data_terbaru_saat_data_lebih_lama()
+    {
+        $this->createTransaksi('2024-06-15', 'pemasukan', 100000);
+
+        $this->actingAs($this->user)
+            ->get(route('dashboard', ['year' => 'abcd']))
+            ->assertOk()
+            ->assertViewHas('year', 2024);
+
+        $this->actingAs($this->user)
+            ->get(route('dashboard', ['year' => '9999']))
+            ->assertOk()
+            ->assertViewHas('year', 2024);
     }
 
     /** @test */
